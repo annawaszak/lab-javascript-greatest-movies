@@ -1,36 +1,37 @@
 const data = require('./data');
 
 // Iteration 1: All directors? - Get the array of all directors.
-const getAllDirectors = (arr) => {
-    const directors = arr.map(film => {
+function getAllDirectors (arr) {
+    return arr.map(film => {
         return film.director;
     })
-    return directors;
 };
 
-console.log(getAllDirectors(data));
-
 // _Bonus_: It seems some of the directors had directed multiple movies so they will pop up multiple times in the array of directors. How could you "clean" a bit this array and make it unified (without duplicates)?
-
-const getAllDirectorsUnified = (arr) => {
+function getAllDirectorsUnified (arr) {
     return arr.filter((director, i, arr) => arr.indexOf(director) === i);
-
-    // ALTERNATIVE
-    // const unified = [];
-    // for (let i = 0; i < arr.length; i++) {
-    //     if (!unified.includes(arr[i])) {
-    //         unified.push(arr[i]);
-    //     }
-    // } 
-    // return unified;
 }
 
-// Iteration 2: Steven Spielberg. The best? - How many drama movies did STEVEN SPIELBERG direct?
+// function getAllDirectorsUnified (arr) {
+//   const unified = [];
+//   for (let i = 0; i < arr.length; i++) {
+//       if (!unified.includes(arr[i])) {
+//           unified.push(arr[i]);
+//       }
+//   } 
+//   return unified;
+// }
 
+// Iteration 2: Steven Spielberg. The best? - How many drama movies did STEVEN SPIELBERG direct?
+function howManyMovies(moviesArr) {
+  return moviesArr.filter(function (movie) {
+    return movie.director === 'Steven Spielberg' && movie.genre.includes('Drama')
+  }).length
+}
 
 
 // Iteration 3: All rates average - Get the average of all rates with 2 decimals
-const ratesAverage = (movies) => {
+function ratesAverage (movies) {
     if (movies.length === 0) return 0;
 
     const ratesSum = movies.reduce((acc, movie) => {
@@ -38,15 +39,12 @@ const ratesAverage = (movies) => {
         return acc + movie.rate;
     }, 0)
     
-    let ratesAverage = Number(ratesSum / movies.length).toFixed(2);
-    return ratesAverage;
+    return Number((ratesSum / movies.length).toFixed(2));
 };
 
-
 // Iteration 4: Drama movies - Get the average of Drama Movies
-
-const dramaMoviesRate = (movies) => {
-    return ratesAverage(moviesArr.filter(function(movie) { 
+function dramaMoviesRate (movies) {
+    return ratesAverage(movies.filter(function(movie) { 
         return movie.genre.includes("Drama")
     }));
 }
@@ -71,20 +69,9 @@ const dramaMoviesRate = (movies) => {
 //     return ratesAverage;
 // };
 
-// Iteration 5: Ordering by year - Order by year, ascending (in growing order)
-const orderByYear = (arr) => {
-    const sorted = [...arr].sort((a, b) => {
-        if (a.title > b.title) {
-            return 1;
-        } else if (a.title < b.title) {
-            return -1;
-        } else if (a.year !== b.year) {
-            return a.year - b.year;
-        }
-    })
-    return sorted;
-};
 
+
+// Iteration 5: Ordering by year - Order by year, ascending (in growing order)
 function orderByYear(movies) {
     return [...movies].sort(function (a, b) {
       if (a.year == b.year) return a.title.localeCompare(b.title);
@@ -92,14 +79,25 @@ function orderByYear(movies) {
     });
 }
 
+// const orderByYear = (arr) => {
+//     const sorted = [...arr].sort((a, b) => {
+//         if (a.title > b.title) {
+//             return 1;
+//         } else if (a.title < b.title) {
+//             return -1;
+//         } else if (a.year !== b.year) {
+//             return a.year - b.year;
+//         }
+//     })
+//     return sorted;
+// };
+
 // Iteration 6: Alphabetic Order - Order by title and print the first 20 titles
-
 function orderAlphabetically(moviesArr) {
-    let listOfMoviesName = moviesArr.map(function(movie) { return movie.title });
-
-    return listOfMoviesName.sort(function(name1, name2) {
-        return name1.localeCompare(name2);
-    }).slice(0, 20);
+    return moviesArr
+    .map(movie => movie.title)
+    .sort((name1, name2) => name1.localeCompare(name2))
+    .slice(0, 20);
 }
 
 // const orderAlphabetically = (movies) => {
@@ -114,10 +112,8 @@ function orderAlphabetically(moviesArr) {
 // };
 
 // BONUS - Iteration 7: Time Format - Turn duration of the movies from hours to minutes
-
-const turnHoursToMinutes = (movies) => {
-    const moviesCopy = [...movies];
-    const durationInMins = moviesCopy.map(movie => {
+function turnHoursToMinutes (movies) {
+    const durationInMins = movies.map(movie => {
       let minutes;
       if (movie.duration.includes(' ')) {
         const split = movie.duration.split(' ').map(element => {
@@ -132,9 +128,23 @@ const turnHoursToMinutes = (movies) => {
     return durationInMins;
   };
 
-// BONUS - Iteration 8: Best yearly rate average - Best yearly rate average
+  function turnHoursToMinutes(movies) {
+    return movies.map(function (movie) {
+      let convertedDuration = 0;
+      if (movie.duration.includes('h')) {
+          convertedDuration += Number(movie.duration.slice(0, movie.duration.indexOf('h'))) * 60;
+      }
+      if (movie.duration.includes('min')) {
+          convertedDuration += Number(movie.duration.slice(movie.duration.indexOf(' ') + 1, movie.duration.indexOf('m')));
+      }
+      return { ...movie, duration: convertedDuration };
+    });
+  }
 
-const bestYearAvg = (movies) => {
+// BONUS - Iteration 8: Best yearly rate average - Best yearly rate average
+function bestYearAvg (movies) {
+    if (movies.length === 0) return null;
+
     let ratingsByYear = {};
   
     movies.forEach(movie => {
@@ -158,7 +168,27 @@ const bestYearAvg = (movies) => {
       return result; 
     }, []);
   
-    return `The best year was ${highestRate} with an average rate of ${yearWithHighestRate}`
+    return `The best year was ${yearWithHighestRate} with an average rate of ${highestRate}`
   }
 
-  
+  const bestYearAvg = ar => {
+    if (!ar.length) return null;
+    const averageRatingsPerYear = [...new Set(ar.map(function (movie) {
+        return movie.year
+    }))].map(function (year) {
+        return {
+            year: year,
+            rate: ratesAverage(ar.filter(function (movie) {
+                return movie.year === year
+            }))
+        }
+    });
+
+    const best = averageRatingsPerYear.sort(function (a, b) {
+        if (a.rate === b.rate) {
+            return a.year - b.year
+        }
+        return b.rate - a.rate;
+    })[0];
+    return `The best year was ${best.year} with an average rate of ${best.rate}`;
+} 
